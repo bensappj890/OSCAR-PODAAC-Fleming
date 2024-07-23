@@ -8,9 +8,15 @@ Data Info:
 Ocean surface currents in this data set are measured for the top 30m of the water column and are averaged to provide an estimate of the current at 15m of depth. The OSCAR NRT program records data daily and uploads files in "near real time", any of these files can be processed by this script. Downloaded any oscar file into the "oscar_data" file which is found in the "project" file, then update the file path in lines 26 and 31 and the script should run smoothly. The program will output a tidy data excel file into the pject file.
 
 Variables:
+
 lat - lattitude, degrees north
+
 Lon - longitude, degrees east
+
 u   - zonal total surface current, eastward sea velocity, m s-1
+
 v   - meridional total surface current, northward sea velocity, m s- 1
+
 ug  - zonal geostrophic surface current, m s-1
+
 vg  - meridional geostrophic surface current, m s-1
