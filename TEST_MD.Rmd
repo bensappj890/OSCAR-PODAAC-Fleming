@@ -1,30 +1,104 @@
 ---
-title: "TEST"
-author: "Benjamin Sapperstein"
-date: "2024-07-23"
+title: "SEA SURFACE DATA"
 output: html_document
+date: "2024-07-16"
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+# load packages
+library(ncdf4)
+library(tidyverse)
+library(ncdump)
+library(earthdatalogin)
+library(CFtime)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+# get metadata
+metadataSSH = ncdump::NetCDF("/cloud/project/SWOT_GPS_2nd")
+metadataSSH
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+# open the NetCDF file
+ncSSH <- nc_open("/cloud/project/SWOT_GPS_2nd")
+vnames <- names(ncSSH$var)
+vnames
+```
+
+```{r}
+# extract data
+latSSH = ncvar_get(ncSSH, "data_01/latitude")
+lonSSH = ncvar_get(ncSSH, "data_01/longitude")
+```
+
+```{r}
+# get time
+timeSSH <- ncvar_get(ncSSH,"data_01/time_tai")
+tunitsSSH <- ncatt_get(ncSSH,"data_01/time_tai","units")
+ntSSH <- dim(timeSSH)
+```
+
+```{r}
+# change time units
+# decode time
+cfSSH <- CFtime(tunitsSSH$value, calendar = "proleptic_gregorian", timeSSH) # convert time to CFtime class
+
+timestampsSSH <-as_timestamp(cfSSH) # get character-string times
+
+time_cfSSH <- CFparse(cfSSH, timestampsSSH) # parse the string into date components
+
+new_timeSSH <- subset(time_cfSSH, select = -c(tz, offset))
+```
+
+```{r}
+# matrix (nlon*nlat rows by 2 cols) of lons and lats
+lonlatSSH <- cbind(lonSSH,latSSH)
+```
+
+```{r}
+# get variables, reshape, and vectorize
+#Sea Surface Height
+SSH_array <- ncvar_get(ncSSH, "data_01/mean_sea_surface_cnescls")
+SSH.vec <- as.vector(SSH_array)
+
+#OceanDepth
+Depth_array <- ncvar_get(ncSSH, "data_01/depth_or_elevation")
+Depth.vec <- as.vector(Depth_array)
+
+#Sea Surface Temp
+Temp_array <- ncvar_get(ncSSH, "data_01/sst")
+Temp.vec <- as.vector(Temp_array-273.15)
+
+#Distance from Coast
+Dis_array <- ncvar_get(ncSSH, "data_01/distance_to_coast")
+Dis.vec <- as.vector(Dis_array)
+```
+
+```{r}
+# create dataframe and add names
+df01 <- data.frame(cbind(new_timeSSH,lonlatSSH,SSH.vec,Temp.vec,Depth.vec,Dis.vec))
+names(df01) <- c("year","month","day","hour","minute","sec","lon","lat","SSH","SST","Depth","Distance")
+head(na.omit(df01), 10)
+```
+
+```{r}
+# create excel from data frame
+library(xlsx)
+library(writexl)
+write_xlsx(
+  df01, 
+  path = "SST&SSH.xlsx", 
+  col_names = TRUE,
+  format_headers = TRUE,
+  use_zip64 = FALSE)
+```
+
+
+
+
+
