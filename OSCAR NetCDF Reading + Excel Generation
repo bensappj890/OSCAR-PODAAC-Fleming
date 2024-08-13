@@ -1,0 +1,103 @@
+---
+title: 'OSCAR NET-CFD Reading'
+author: Benjamin Sapperstein
+output: html_document
+date: "2024-06-25"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# load packages
+library(ncdf4)
+library(tidyverse)
+library(ncdump)
+library(sf)
+library(RNetCDF)
+library(lattice)
+library(CFtime)
+library(RColorBrewer)
+```
+
+```{r}
+# get metadata
+metadata = ncdump::NetCDF("/cloud/project/oscar_data/oscar_currents_final_20201231_Final.nc")
+```
+
+```{r}
+# open the NetCDF file
+ncfile <- nc_open("/cloud/project/oscar_data/oscar_currents_final_20201231_Final.nc")
+
+# get variables
+Zonal_info <- names(ncfile[['var']])
+
+# extract the spatial variables
+lon <- ncvar_get(ncfile, "lon")
+nlon <- dim(lon)
+
+lat <- ncvar_get(ncfile, "lat")
+nlat <- dim(lat)
+
+Df <- c(nlon,nlat)
+```
+
+```{r}
+# get time
+time <- ncvar_get(ncfile,"time")
+tunits <- ncatt_get(ncfile,"time","units")
+nt <- dim(time)
+```
+
+```{r}
+# change time units
+# decode time
+cf <- CFtime(tunits$value, calendar = "proleptic_gregorian", time) # convert time to CFtime class
+
+timestamps <-as_timestamp(cf) # get character-string times
+
+time_cf <- CFparse(cf, timestamps) # parse the string into date components
+
+new_time <- subset(time_cf, select = -c(tz, offset))
+```
+
+```{r}
+# matrix (nlon*nlat rows by 2 cols) of lons and lats
+lonlat <- as.matrix(expand.grid(lon,lat))
+```
+
+```{r}
+# get variables, reshape, and vectorize
+#Zonal
+U_array <- ncvar_get(ncfile, "u")
+u.vec <- as.vector(U_array)
+# Meridional
+v_array <- ncvar_get(ncfile, "v")
+v.vec <- as.vector(v_array)
+
+#Zonal Geostrophic
+ug_array <- ncvar_get(ncfile, "ug")
+ug.vec <- as.vector(ug_array)
+
+#Meridonal Geostrophic
+vg_array <- ncvar_get(ncfile, "vg")
+vg.vec <- as.vector(vg_array)
+
+# create dataframe and add names
+df01 <- data.frame(cbind(new_time,lonlat,u.vec,v.vec,ug.vec,vg.vec))
+names(df01) <- c("year","month","day","hour","minute","sec","lon","lat","u","v","ug","vg")
+head(na.omit(df01), 10)
+```
+
+```
+# create excel from data frame
+library(xlsx)
+library(writexl)
+write_xlsx(
+  df01, 
+  path = "Final_OSCARdata_Rscript.xlsx", 
+  col_names = TRUE,
+  format_headers = TRUE,
+  use_zip64 = FALSE)
+```
