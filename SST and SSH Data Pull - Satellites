@@ -19,13 +19,13 @@ library(CFtime)
 
 ```{r}
 # get metadata
-metadataSSH = ncdump::NetCDF("/cloud/project/SWOT_GPS_2nd")
+metadataSSH = ncdump::NetCDF("/cloud/project/YourFilePath")
 metadataSSH
 ```
 
 ```{r}
 # open the NetCDF file
-ncSSH <- nc_open("/cloud/project/SWOT_GPS_2nd")
+ncSSH <- nc_open("/cloud/project/YourFilePath")
 vnames <- names(ncSSH$var)
 vnames
 ```
