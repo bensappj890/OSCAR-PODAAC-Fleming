@@ -1,13 +1,16 @@
 Data Locations:
 
-OSCAR Data (Currents), Three Latencies:
+**OSCAR Data (Currents), Three Latencies:**
+
 Final: https://podaac.jpl.nasa.gov/dataset/OSCAR_L4_OC_FINAL_V2.0
+
 Interim: https://podaac.jpl.nasa.gov/dataset/OSCAR_L4_OC_INTERIM_V2.0
+
 Near Real Time: https://podaac.jpl.nasa.gov/dataset/OSCAR_L4_OC_NRT_V2.0
 
-Sea Surface Height and Temperature (SST and SSH): https://podaac.jpl.nasa.gov/dataset/SWOT_L2_NALT_GDR_2.0
+**Sea Surface Height and Temperature (SST and SSH):** https://podaac.jpl.nasa.gov/dataset/SWOT_L2_NALT_GDR_2.0
 
-Salinity: https://podaac.jpl.nasa.gov/dataset/SMAP_JPL_L2B_NRT_SSS_CAP_V5
+**Salinity:** https://podaac.jpl.nasa.gov/dataset/SMAP_JPL_L2B_NRT_SSS_CAP_V5
 
 
 PODAAC OSCAR Satellite Data:
