@@ -1,0 +1,73 @@
+---
+title: "SSS - Data Pull"
+author: "Benjamin Sapperstein"
+date: "2024-07-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# load packages
+library(dplyr)
+library(BiocManager)
+BiocManager::install("rhdf5")
+```
+
+```{r}
+# Open H5 file
+library(rhdf5)
+FileSSS <- ("/cloud/project/SSS_data.h5")
+List <- h5ls(FileSSS)
+Dump <- h5dump(FileSSS)
+```
+
+```{r}
+# extract location data
+latSSS = h5read(FileSSS, "lat")
+LV = as.vector(latSSS)
+Latvec <- na_if(LV, -9999)
+lonSSS = h5read(FileSSS, "lon")
+LV = as.vector(lonSSS)
+Lonvec <- na_if(LV, -9999)
+```
+
+```{r}
+# get time
+timeSSS <- h5read(FileSSS,"row_time")
+
+#reformat time
+library(lubridate)
+td <-seconds_to_period(timeSSS)
+Sprint <- sprintf('%2.f:%2.f:%.1f', td@hour, minute(td), second(td))
+TimeData <- data.frame(Sprint)
+```
+
+```{r}
+#get and format Salinity data
+SSSarray <- h5read(FileSSS, "smap_sss")
+SV <- as.vector(SSSarray)
+SaltVector <- na_if(SV, -9999)
+```
+
+```{r}
+# create dataframe and add names
+df01 <- data.frame(cbind(TimeData, Latvec, Lonvec, SaltVector))
+names(df01) <- c("Time(hr:min:sec)", "lat", "lon", "Salt")
+dfFixed <- na.omit(df01)
+head(dfFixed)
+```
+
+```{r}
+# create excel from data frame
+library(xlsx)
+library(writexl)
+write_xlsx(
+  dfFixed, 
+  path = "SalinityData.xlsx", 
+  col_names = TRUE,
+  format_headers = TRUE,
+  use_zip64 = FALSE)
+```
