@@ -1,4 +1,4 @@
-Data Locations:
+Data Locations, click links then go to "Data Access", then click "Browse Granule Listing" and pick your desired file:
 
 **OSCAR Data (Currents), Three Latencies:**
 
