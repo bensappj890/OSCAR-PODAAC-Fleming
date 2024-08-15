@@ -96,7 +96,7 @@ library(xlsx)
 library(writexl)
 write_xlsx(
   df01, 
-  path = "Final_OSCARdata_Rscript.xlsx", 
+  path = "OSCARdata.xlsx", 
   col_names = TRUE,
   format_headers = TRUE,
   use_zip64 = FALSE)
