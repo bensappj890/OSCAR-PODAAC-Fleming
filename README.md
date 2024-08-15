@@ -12,6 +12,7 @@ Near Real Time: https://podaac.jpl.nasa.gov/dataset/OSCAR_L4_OC_NRT_V2.0
 
 **Salinity:** https://podaac.jpl.nasa.gov/dataset/SMAP_JPL_L2B_NRT_SSS_CAP_V5
 
+Other Information:
 
 PODAAC OSCAR Satellite Data:
 Ocean Surface Current Analyses Real-time (OSCAR) Surface Currents - Near Real Time 0.25 Degree (Version 2.0)
