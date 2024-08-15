@@ -19,7 +19,7 @@ BiocManager::install("rhdf5")
 ```{r}
 # Open H5 file
 library(rhdf5)
-FileSSS <- ("/cloud/project/SSS_data.h5")
+FileSSS <- ("/cloud/project/yourfilepath.h5")
 List <- h5ls(FileSSS)
 Dump <- h5dump(FileSSS)
 ```
