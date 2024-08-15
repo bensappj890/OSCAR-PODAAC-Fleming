@@ -92,7 +92,7 @@ library(xlsx)
 library(writexl)
 write_xlsx(
   df01, 
-  path = "SST&SSH.xlsx", 
+  path = "SST_SSH_Data.xlsx", 
   col_names = TRUE,
   format_headers = TRUE,
   use_zip64 = FALSE)
