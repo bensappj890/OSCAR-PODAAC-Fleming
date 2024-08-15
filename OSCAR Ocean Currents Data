@@ -23,12 +23,12 @@ library(RColorBrewer)
 
 ```{r}
 # get metadata
-metadata = ncdump::NetCDF("/cloud/project/oscar_data/oscar_currents_final_20201231_Final.nc")
+metadata = ncdump::NetCDF("/cloud/project/oscar_data/yourfilepath.nc")
 ```
 
 ```{r}
 # open the NetCDF file
-ncfile <- nc_open("/cloud/project/oscar_data/oscar_currents_final_20201231_Final.nc")
+ncfile <- nc_open("/cloud/project/oscar_data/yourfilepath.nc")
 
 # get variables
 Zonal_info <- names(ncfile[['var']])
